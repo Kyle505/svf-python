@@ -39,4 +39,3 @@ WORKDIR /home/
 RUN git clone "https://github.com/SVF-tools/SVF-example.git"
 WORKDIR /home/SVF-example
 RUN cmake . && make
-COPY run.py .
