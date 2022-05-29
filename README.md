@@ -40,13 +40,70 @@ This repo contains the source code for the UTS 32933 Research Project. To extend
 
 To run this `SVF-tool` externally with python port, please use `Docker` to build it and run it.
 
+
+
+We have provided a compiled .so library under the `lib` folder, an official Ubuntu Linux distribution could load it and run it natively
+
+After clone this repo in your Ubuntu 2004
+
+```bash
+git clone https://github.com/Kyle505/svf-python.git
+```
+
+simple run
+
+```bash
+python3 svf.py 
+```
+
+
+output:
+```
+*********CallGraph Stats***************
+################ (program : )###############
+-------------------------------------------------------
+CalRetPairInCycle   0
+MaxNodeInCycle      0
+NodeInCycle         0
+TotalEdge           1
+TotalCycle          0
+TotalNode           3
+#######################################################
+
+*********General Stats***************
+################ (program : )###############
+BBWith2Succ         0
+LocalVarInRecur     0
+BBWith3Succ         0
+TotalCallSite       1
+NonPtrObj           6
+VarStructObj        0
+ConstStructObj      0
+StackObjs           7
+HeapObjs            0
+GlobalObjs          0
+...
+...
+...
+FIObjNum            0
+TotalPTASVFStmts    27
+TotalSVFStmts       29
+CopysNum            1
+FSObjNum            11
+StoresNum           7
+TotalFieldObjects   0
+AddrsNum            11
+-------------------------------------------------------
+#######################################################
+```
+
+If you wish to compile your own version, read the following sections.
+
 ### Prerequisites
 
 `Docker` is the only thing you need to run this project. Since we need several dependencies to run the SVF-tools
 
 ### Installation
-
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
 1. Install the [Docker](https://www.docker.com/get-started/)
 
@@ -84,17 +141,24 @@ _Python script and env stuff should be setup automatically, DockerFile comes fro
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-
-1. Run python script
-
-After launch the Docker, the workdir should be set as the following
+After launch the Docker, and clone this repo
 
 > root@6ef008b4185e:/home/SVF-example#
 
-Simply run the command below
+```bash
+git clone https://github.com/Kyle505/svf-python.git
+```
+
+Then compile the shared library
+
+```bash
+make
+```
+
+Simply run the python script
 
 ```
-python3 run.py --file example.c
+python3 svf.py
 ```
 
 output:
@@ -137,7 +201,6 @@ AddrsNum            11
 #######################################################
 ```
 
-Note that any c code can be replaced in the argument `--file`, everything will be compiled with LLVM and analyzed by SVF.
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
