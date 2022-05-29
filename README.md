@@ -155,6 +155,12 @@ Then compile the shared library
 make
 ```
 
+Change workdir into cloned project
+
+```bash
+cd svf-python
+```
+
 Simply run the python script
 
 ```
