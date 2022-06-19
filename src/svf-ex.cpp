@@ -41,102 +41,64 @@ static llvm::cl::opt<std::string> InputFilename(cl::Positional,
 
 
 extern "C" {
-    // std::vector<std::string> moduleNameVec;
-    //SVFModule* svfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(moduleNameVec);
 
-    void GetSVFModule(char* moduleName) {
+    // Segmentation Fault
+    SVFModule* svfModule;
+
+    SVFIRBuilder *builder;
+    SVFIR* pag;
+
+    // Create Andersen's pointer analysis
+    Andersen* ander;
+
+    /// Call Graph
+    PTACallGraph* callgraph;
+
+    ICFG* icfg;
+    VFG* vfg;
+    SVFGBuilder* svfBuilder;
+    SVFG* svfg;
+
+    void initSVFModule(char* moduleName) {
         static std::vector<std::string> moduleNameVec;
         moduleNameVec = {moduleName};
-        SVFModule* svfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(moduleNameVec);
-        svfModule->buildSymbolTableInfo();
-        //SVFIRBuilder builder;
-        //SVFIR* pag = builder.build(svfModule);
-        /// Create Andersen's pointer analysis
-        //Andersen* ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
-        SVFIRBuilder builder;
-        SVFIR* pag = builder.build(svfModule);
-
-        /// Create Andersen's pointer analysis
-        Andersen* ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
-        /// Call Graph
-        PTACallGraph* callgraph = ander->getPTACallGraph();
-
-        /// ICFG
-        ICFG* icfg = pag->getICFG();
-
-        /// Value-Flow Graph (VFG)
-        VFG* vfg = new VFG(callgraph);
-
-        /// Sparse value-flow graph (SVFG)
-        SVFGBuilder svfBuilder;
-        SVFG* svfg = svfBuilder.buildFullSVFG(ander);
-        delete vfg;
-        delete svfg;
-        AndersenWaveDiff::releaseAndersenWaveDiff();
-        SVFIR::releaseSVFIR();
-
-        LLVMModuleSet::getLLVMModuleSet()->dumpModulesToFile(".svf.bc");
-        SVF::LLVMModuleSet::releaseLLVMModuleSet();
-
-        llvm::llvm_shutdown();
-
-    }
-
-    void Analysis(SVFModule* svfModule) {
-        SVFIRBuilder builder;
-        SVFIR* pag = builder.build(svfModule);
-
-        /// Create Andersen's pointer analysis
-        Andersen* ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
-        /// Call Graph
-        PTACallGraph* callgraph = ander->getPTACallGraph();
-
-        /// ICFG
-        ICFG* icfg = pag->getICFG();
-
-        /// Value-Flow Graph (VFG)
-        VFG* vfg = new VFG(callgraph);
-
-        /// Sparse value-flow graph (SVFG)
-        SVFGBuilder svfBuilder;
-        SVFG* svfg = svfBuilder.buildFullSVFG(ander);
-        delete vfg;
-        delete svfg;
-        AndersenWaveDiff::releaseAndersenWaveDiff();
-        SVFIR::releaseSVFIR();
-
-        LLVMModuleSet::getLLVMModuleSet()->dumpModulesToFile(".svf.bc");
-        SVF::LLVMModuleSet::releaseLLVMModuleSet();
-
-        llvm::llvm_shutdown();
+        svfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(moduleNameVec);
     }
 
 
-    void svfModule() {
-        static std::vector<std::string> moduleNameVec;
-        moduleNameVec = {"example.ll"};
-        //*moduleNameVec.insert(moduleNameVec.begin(), moduleName);
-        SVFModule* svfModule = LLVMModuleSet::getLLVMModuleSet()->buildSVFModule(moduleNameVec);
+
+    void buildSymbolTableInfo() {
         svfModule->buildSymbolTableInfo();
 
-        /// Build Program Assignment Graph (SVFIR)
+    }
+
+    void buildSVFIR() {
         SVFIRBuilder builder;
-        SVFIR* pag = builder.build(svfModule);
+        pag = builder.build(svfModule);
+    }
 
-        /// Create Andersen's pointer analysis
-        Andersen* ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
-        /// Call Graph
-        PTACallGraph* callgraph = ander->getPTACallGraph();
+    void createAndersenWaveDiff() {
+        ander = AndersenWaveDiff::createAndersenWaveDiff(pag);
+    }
 
-        /// ICFG
-        ICFG* icfg = pag->getICFG();
+    void getPTACallGraph() {
+        callgraph = ander -> getPTACallGraph();
+    }
 
-        /// Value-Flow Graph (VFG)
-        VFG* vfg = new VFG(callgraph);
+    void getICFG() {
+        icfg = pag -> getICFG();
+    }
 
-        /// Sparse value-flow graph (SVFG)
+    void getVFG() {
+        vfg = new VFG(callgraph);
+    }
+
+    void buildFullSVFG() {
         SVFGBuilder svfBuilder;
-        SVFG* svfg = svfBuilder.buildFullSVFG(ander);
+        svfg = svfBuilder.buildFullSVFG(ander);
+    }
+
+    void release() {
         delete vfg;
         delete svfg;
         AndersenWaveDiff::releaseAndersenWaveDiff();
